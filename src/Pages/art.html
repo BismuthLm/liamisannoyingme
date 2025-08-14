@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aurora Flow Field — HTML5 Canvas</title>
+  <style>
+    :root {
+      --bg: #05060a;
+      --fg: #e6f3ff;
+      --accent: #80ffe0;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; background: radial-gradient(1200px 800px at 20% 10%, #0a0f1f, #05060a 60%); color: var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+    canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+    .ui {
+      position: fixed; right: 20px; top: 20px; z-index: 2; user-select: none; pointer-events: none;
+      background: rgba(10,12,20,.45); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 14px 16px; box-shadow: 0 15px 50px rgba(0,0,0,.35);
+      max-width: 340px; line-height: 1.25;
+    }
+    .ui h1 { font-size: 14px; margin: 0 0 6px; letter-spacing: .12em; text-transform: uppercase; opacity: .85; }
+    .ui p { font-size: 12px; margin: 4px 0; opacity: .9; }
+    .ui kbd { background: rgba(255,255,255,.1); padding: 2px 6px; border-radius: 6px; font-size: 11px; }
+    .footer { position: fixed; left: 20px; bottom: 16px; font-size: 12px; opacity: .7; }
+    .hidden { opacity: 0; transform: translateY(-6px); transition: opacity .4s ease, transform .4s ease; }
+    .show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div class="ui show" id="ui">
+    <h1>Aurora Flow Field</h1>
+    <p>Thousands of glowing "particles" surf a noise flow field with additive light blending, trails, and parallax layers. Highly optimized for retina displays.</p>
+    <p><kbd>Click / Drag</kbd> attractor • <kbd>Shift</kbd> to repel • <kbd>Space</kbd> pulse • <kbd>H</kbd> hide UI • <kbd>R</kbd> regenerate</p>
+  </div>
+  <div class="footer">© Canvas demo</div>
+
+  <script>
+  ;(() => {
+    const TAU = Math.PI * 2;
+    const rand = (a=1,b=0)=>Math.random()*(a-b)+b;
+
+    // Responsive canvas with DPR scaling
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d', { alpha: false });
+    const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+
+    // Offscreen buffer for subtle post-processing
+    const buffer = document.createElement('canvas');
+    const bctx = buffer.getContext('2d');
+
+    let W=0, H=0, T=0;
+    function resize() {
+      const cssW = window.innerWidth;
+      const cssH = window.innerHeight;
+      W = canvas.width = Math.floor(cssW * dpr);
+      H = canvas.height = Math.floor(cssH * dpr);
+      buffer.width = W; buffer.height = H;
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      bctx.imageSmoothingEnabled = true;
+      bctx.imageSmoothingQuality = 'high';
+    }
+    window.addEventListener('resize', resize, { passive: true });
+    resize();
+
+    // --- Simplex Noise (2D) implementation (public domain adaptation) ---
+    // Lightweight simplex noise for smooth vector field
+    const grad3 = new Float32Array([
+      1,1,0, -1,1,0, 1,-1,0, -1,-1,0,
+      1,0,1, -1,0,1, 1,0,-1, -1,0,-1,
+      0,1,1, 0,-1,1, 0,1,-1, 0,-1,-1,
+    ]);
+    const p = new Uint8Array(256);
+    const perm = new Uint8Array(512);
+    function seedNoise(seed){
+      let x = (seed>>>0) ^ 0xDEADBEEF;
+      for (let i=0;i<256;i++) {
+        x ^= x<<13; x ^= x>>>17; x ^= x<<5; // xorshift
+        p[i] = x & 255;
+      }
+      for (let i=0;i<512;i++) perm[i] = p[i & 255];
+    }
+    seedNoise((Math.random()*1e9)|0);
+
+    function dot(gx, gy, x, y){ return gx*x + gy*y; }
+    function noise2D(xin, yin){
+      const F2 = 0.366025403; // 0.5*(sqrt(3)-1)
+      const G2 = 0.211324865; // (3-sqrt(3))/6
+      let n0=0, n1=0, n2=0;
+      const s = (xin+yin)*F2;
+      let i = Math.floor(xin + s);
+      let j = Math.floor(yin + s);
+      const t = (i + j)*G2;
+      const X0 = i - t, Y0 = j - t;
+      const x0 = xin - X0, y0 = yin - Y0;
+      let i1, j1;
+      if (x0 > y0) { i1 = 1; j1 = 0; } else { i1 = 0; j1 = 1; }
+      const x1 = x0 - i1 + G2, y1 = y0 - j1 + G2;
+      const x2 = x0 - 1 + 2*G2, y2 = y0 - 1 + 2*G2;
+      const ii = i & 255, jj = j & 255;
+      const gi0 = (perm[ii + perm[jj]] % 12) * 3;
+      const gi1 = (perm[ii + i1 + perm[jj + j1]] % 12) * 3;
+      const gi2 = (perm[ii + 1 + perm[jj + 1]] % 12) * 3;
+
+      let t0 = 0.5 - x0*x0 - y0*y0; if (t0>0){ t0*=t0; n0 = t0*t0*dot(grad3[gi0], grad3[gi0+1], x0, y0); }
+      let t1 = 0.5 - x1*x1 - y1*y1; if (t1>0){ t1*=t1; n1 = t1*t1*dot(grad3[gi1], grad3[gi1+1], x1, y1); }
+      let t2 = 0.5 - x2*x2 - y2*y2; if (t2>0){ t2*=t2; n2 = t2*t2*dot(grad3[gi2], grad3[gi2+1], x2, y2); }
+
+      return 70 * (n0 + n1 + n2);
+    }
+
+    // --- Flow Field & Particles ---
+    const settings = {
+      layers: 3,
+      density: 1.2,    // base density multiplier
+      speed: 0.65,     // base speed multiplier
+      curl: 0.9,       // how twisty the field is
+      drag: 0.06,      // velocity damping
+      fade: 0.06,      // trail fade strength per frame
+      glow: 16 * dpr,  // shadow blur for glow
+      lineW: 0.8,      // base line width (scaled per layer)
+      chroma: 0.6,     // slight color channel offsets
+    };
+
+    const layers = [];
+    const mouse = { x: 0, y: 0, down: false, repel: false };
+    let pulse = 0;
+
+    function initLayers(){
+      layers.length = 0;
+      const baseCount = Math.floor((W*H) / (1300 / settings.density));
+      for (let i=0;i<settings.layers;i++){
+        const scale = 0.0015 + i*0.0008; // per-layer noise scale
+        const amp = 1 - i*0.15;          // per-layer velocity attenuation
+        const count = Math.floor(baseCount * (0.55 + i*0.35));
+        const particles = new Float32Array(count * 6); // x,y, vx,vy, life, hueBase
+        for (let j=0;j<count;j++){
+          const idx = j*6;
+          particles[idx]   = Math.random()*W;
+          particles[idx+1] = Math.random()*H;
+          particles[idx+2] = rand(1,-1);
+          particles[idx+3] = rand(1,-1);
+          particles[idx+4] = rand(1,0);
+          particles[idx+5] = rand(360,0);
+        }
+        layers.push({ scale, amp, particles, count, jitter: rand(1,0) });
+      }
+    }
+    initLayers();
+
+    function fieldVec(x, y, t, scl, curl){
+      // Compute a curl-like vector from simplex noise gradients
+      const n1 = noise2D(x*scl + t*0.0002, y*scl + 100 + t*0.00018);
+      const n2 = noise2D(x*scl + 200 + t*0.00015, y*scl + 300 + t*0.00021);
+      // Derivative approximation via small offsets
+      const e = 0.0005;
+      const dx = noise2D((x+e)*scl + t*0.0002, y*scl + 100 + t*0.00018) - n1;
+      const dy = noise2D(x*scl + 200 + t*0.00015, (y+e)*scl + 300 + t*0.00021) - n2;
+      let vx = (dy * curl) + n1 * (1-curl);
+      let vy = (-dx * curl) + n2 * (1-curl);
+      return [vx, vy];
+    }
+
+    function step(dt){
+      T += dt;
+
+      // Trail fade using a subtle vignette
+      bctx.globalCompositeOperation = 'source-over';
+      bctx.fillStyle = `rgba(5,6,10,${settings.fade})`;
+      bctx.fillRect(0,0,W,H);
+
+      bctx.globalCompositeOperation = 'lighter';
+      bctx.lineCap = 'round';
+      bctx.lineJoin = 'round';
+
+      for (let l=0; l<layers.length; l++){
+        const { scale, amp, particles, count } = layers[l];
+        const lw = settings.lineW * (1 + l*0.35) * dpr;
+        bctx.lineWidth = lw;
+        bctx.shadowBlur = settings.glow * (1 + l*0.25);
+
+        for (let i=0;i<count;i++){
+          const idx = i*6;
+          const x = particles[idx], y = particles[idx+1];
+          let vx = particles[idx+2], vy = particles[idx+3];
+          const life = particles[idx+4];
+          const hueBase = particles[idx+5];
+
+          const [fx, fy] = fieldVec(x, y, T, scale, settings.curl);
+          vx += fx * settings.speed * amp;
+          vy += fy * settings.speed * amp;
+
+          // Mouse attract / repel
+          if (mouse.down){
+            const dx = (mouse.x - x), dy = (mouse.y - y);
+            const d2 = dx*dx + dy*dy + 0.001;
+            const f = (mouse.repel ? -1 : 1) * 1800 / d2;
+            vx += dx * f * amp;
+            vy += dy * f * amp;
+          }
+
+          // Pulse burst
+          if (pulse>0){
+            const cx = W*0.5, cy = H*0.5;
+            const dx = x - cx, dy = y - cy; const dd = Math.hypot(dx,dy)+0.001;
+            vx += (dx/dd) * pulse * 0.35 * amp;
+            vy += (dy/dd) * pulse * 0.35 * amp;
+          }
+
+          // Integrate
+          vx *= (1 - settings.drag);
+          vy *= (1 - settings.drag);
+          const nx = x + vx;
+          const ny = y + vy;
+
+          // Draw segment with hue cycling by velocity angle & layer depth
+          const ang = Math.atan2(vy, vx);
+          const hue = (hueBase + (ang/TAU)*360 + l*40 + T*0.006) % 360;
+          const alpha = 0.16 + 0.25*life + 0.2*layers.length/(l+layers.length);
+          bctx.strokeStyle = `hsla(${hue}, 90%, 60%, ${alpha})`;
+          bctx.shadowColor = `hsla(${(hue+30)%360}, 90%, 55%, ${alpha*0.8})`;
+          bctx.beginPath();
+          bctx.moveTo(x, y);
+          bctx.lineTo(nx, ny);
+          bctx.stroke();
+
+          // Keep inside bounds with wraparound
+          let tx = nx, ty = ny;
+          if (nx<0) tx = W + nx%W; else if (nx>=W) tx = nx%W;
+          if (ny<0) ty = H + ny%H; else if (ny>=H) ty = ny%H;
+
+          // Store
+          particles[idx] = tx; particles[idx+1] = ty;
+          particles[idx+2] = vx; particles[idx+3] = vy;
+          particles[idx+4] = (life + 0.005) % 1;
+        }
+      }
+
+      // Mild chromatic aberration / bloom by offsetting channels
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.filter = 'none';
+      ctx.drawImage(buffer, 0, 0);
+      const offs = settings.chroma * dpr;
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = 0.35;
+      ctx.drawImage(buffer, offs, 0);
+      ctx.drawImage(buffer, -offs, 0);
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+
+      // UI pulse decay
+      pulse *= 0.94;
+      if (pulse < 0.01) pulse = 0;
+    }
+
+    // --- Animation loop with adaptive timestep ---
+    let last = performance.now();
+    function loop(now){
+      const dt = Math.min(32, now - last); // clamp for tab switches
+      last = now;
+      step(dt);
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    // --- Interaction ---
+    function pointer(e){
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * dpr;
+      const y = (e.clientY - rect.top) * dpr;
+      mouse.x = x; mouse.y = y;
+    }
+    window.addEventListener('pointermove', pointer, { passive: true });
+    window.addEventListener('pointerdown', e => { mouse.down = true; pointer(e); });
+    window.addEventListener('pointerup',   () => mouse.down = false);
+    window.addEventListener('keydown', e => {
+      if (e.code === 'Space'){ pulse = 12; }
+      if (e.key === 'Shift'){ mouse.repel = true; }
+      if (e.key === 'h' || e.key === 'H') toggleUI();
+      if (e.key === 'r' || e.key === 'R'){ seedNoise((Math.random()*1e9)|0); initLayers(); }
+    });
+    window.addEventListener('keyup', e => { if (e.key === 'Shift') mouse.repel = false; });
+
+    function toggleUI(){
+      const el = document.getElementById('ui');
+      if (!el) return;
+      if (el.classList.contains('show')) { el.classList.remove('show'); el.classList.add('hidden'); }
+      else { el.classList.remove('hidden'); el.classList.add('show'); }
+    }
+
+    // Start with one cinematic pulse
+    setTimeout(()=>{ pulse = 10; }, 400);
+  })();
+  </script>
+</body>
+</html>

@@ -155,8 +155,6 @@ function generateWords(){
         }
       }
 
-
-
       if(index == lastindex && corpus[lastindex] != "fs"){
         join = ", ";
       }
