@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aurora Flow Field — HTML5 Canvas</title>
+  <title>Art</title>
   <style>
     :root {
       --bg: #05060a;
@@ -30,23 +30,17 @@
 <body>
   <canvas id="c"></canvas>
   <div class="ui show" id="ui">
-    <h1>Aurora Flow Field</h1>
-    <p>Thousands of glowing "particles" surf a noise flow field with additive light blending, trails, and parallax layers. Highly optimized for retina displays.</p>
-    <p><kbd>Click / Drag</kbd> attractor • <kbd>Shift</kbd> to repel • <kbd>Space</kbd> pulse • <kbd>H</kbd> hide UI • <kbd>R</kbd> regenerate</p>
   </div>
-  <div class="footer">© Canvas demo</div>
 
   <script>
   ;(() => {
     const TAU = Math.PI * 2;
     const rand = (a=1,b=0)=>Math.random()*(a-b)+b;
 
-    // Responsive canvas with DPR scaling
     const canvas = document.getElementById('c');
     const ctx = canvas.getContext('2d', { alpha: false });
     const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
 
-    // Offscreen buffer for subtle post-processing
     const buffer = document.createElement('canvas');
     const bctx = buffer.getContext('2d');
 
@@ -66,8 +60,6 @@
     window.addEventListener('resize', resize, { passive: true });
     resize();
 
-    // --- Simplex Noise (2D) implementation (public domain adaptation) ---
-    // Lightweight simplex noise for smooth vector field
     const grad3 = new Float32Array([
       1,1,0, -1,1,0, 1,-1,0, -1,-1,0,
       1,0,1, -1,0,1, 1,0,-1, -1,0,-1,
@@ -78,7 +70,7 @@
     function seedNoise(seed){
       let x = (seed>>>0) ^ 0xDEADBEEF;
       for (let i=0;i<256;i++) {
-        x ^= x<<13; x ^= x>>>17; x ^= x<<5; // xorshift
+        x ^= x<<13; x ^= x>>>17; x ^= x<<5;
         p[i] = x & 255;
       }
       for (let i=0;i<512;i++) perm[i] = p[i & 255];
@@ -87,8 +79,8 @@
 
     function dot(gx, gy, x, y){ return gx*x + gy*y; }
     function noise2D(xin, yin){
-      const F2 = 0.366025403; // 0.5*(sqrt(3)-1)
-      const G2 = 0.211324865; // (3-sqrt(3))/6
+      const F2 = 0.366025403;
+      const G2 = 0.211324865;
       let n0=0, n1=0, n2=0;
       const s = (xin+yin)*F2;
       let i = Math.floor(xin + s);
@@ -112,17 +104,17 @@
       return 70 * (n0 + n1 + n2);
     }
 
-    // --- Flow Field & Particles ---
+    
     const settings = {
       layers: 3,
-      density: 1.2,    // base density multiplier
-      speed: 0.65,     // base speed multiplier
-      curl: 0.9,       // how twisty the field is
-      drag: 0.06,      // velocity damping
-      fade: 0.06,      // trail fade strength per frame
-      glow: 16 * dpr,  // shadow blur for glow
-      lineW: 0.8,      // base line width (scaled per layer)
-      chroma: 0.6,     // slight color channel offsets
+      density: 1.2,    
+      speed: 0.65,     
+      curl: 0.9,       
+      drag: 0.06,      
+      fade: 0.06,      
+      glow: 16 * dpr,  
+      lineW: 0.8,      
+      chroma: 0.6,     
     };
 
     const layers = [];
@@ -133,10 +125,10 @@
       layers.length = 0;
       const baseCount = Math.floor((W*H) / (1300 / settings.density));
       for (let i=0;i<settings.layers;i++){
-        const scale = 0.0015 + i*0.0008; // per-layer noise scale
-        const amp = 1 - i*0.15;          // per-layer velocity attenuation
+        const scale = 0.0015 + i*0.0008; 
+        const amp = 1 - i*0.15;          
         const count = Math.floor(baseCount * (0.55 + i*0.35));
-        const particles = new Float32Array(count * 6); // x,y, vx,vy, life, hueBase
+        const particles = new Float32Array(count * 6); 
         for (let j=0;j<count;j++){
           const idx = j*6;
           particles[idx]   = Math.random()*W;
@@ -152,10 +144,10 @@
     initLayers();
 
     function fieldVec(x, y, t, scl, curl){
-      // Compute a curl-like vector from simplex noise gradients
+      
       const n1 = noise2D(x*scl + t*0.0002, y*scl + 100 + t*0.00018);
       const n2 = noise2D(x*scl + 200 + t*0.00015, y*scl + 300 + t*0.00021);
-      // Derivative approximation via small offsets
+      
       const e = 0.0005;
       const dx = noise2D((x+e)*scl + t*0.0002, y*scl + 100 + t*0.00018) - n1;
       const dy = noise2D(x*scl + 200 + t*0.00015, (y+e)*scl + 300 + t*0.00021) - n2;
@@ -167,7 +159,7 @@
     function step(dt){
       T += dt;
 
-      // Trail fade using a subtle vignette
+      
       bctx.globalCompositeOperation = 'source-over';
       bctx.fillStyle = `rgba(5,6,10,${settings.fade})`;
       bctx.fillRect(0,0,W,H);
@@ -193,7 +185,6 @@
           vx += fx * settings.speed * amp;
           vy += fy * settings.speed * amp;
 
-          // Mouse attract / repel
           if (mouse.down){
             const dx = (mouse.x - x), dy = (mouse.y - y);
             const d2 = dx*dx + dy*dy + 0.001;
@@ -202,7 +193,6 @@
             vy += dy * f * amp;
           }
 
-          // Pulse burst
           if (pulse>0){
             const cx = W*0.5, cy = H*0.5;
             const dx = x - cx, dy = y - cy; const dd = Math.hypot(dx,dy)+0.001;
@@ -210,13 +200,11 @@
             vy += (dy/dd) * pulse * 0.35 * amp;
           }
 
-          // Integrate
           vx *= (1 - settings.drag);
           vy *= (1 - settings.drag);
           const nx = x + vx;
           const ny = y + vy;
 
-          // Draw segment with hue cycling by velocity angle & layer depth
           const ang = Math.atan2(vy, vx);
           const hue = (hueBase + (ang/TAU)*360 + l*40 + T*0.006) % 360;
           const alpha = 0.16 + 0.25*life + 0.2*layers.length/(l+layers.length);
@@ -227,19 +215,16 @@
           bctx.lineTo(nx, ny);
           bctx.stroke();
 
-          // Keep inside bounds with wraparound
           let tx = nx, ty = ny;
           if (nx<0) tx = W + nx%W; else if (nx>=W) tx = nx%W;
           if (ny<0) ty = H + ny%H; else if (ny>=H) ty = ny%H;
 
-          // Store
           particles[idx] = tx; particles[idx+1] = ty;
           particles[idx+2] = vx; particles[idx+3] = vy;
           particles[idx+4] = (life + 0.005) % 1;
         }
       }
 
-      // Mild chromatic aberration / bloom by offsetting channels
       ctx.globalCompositeOperation = 'source-over';
       ctx.filter = 'none';
       ctx.drawImage(buffer, 0, 0);
@@ -251,22 +236,19 @@
       ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = 'source-over';
 
-      // UI pulse decay
       pulse *= 0.94;
       if (pulse < 0.01) pulse = 0;
     }
 
-    // --- Animation loop with adaptive timestep ---
     let last = performance.now();
     function loop(now){
-      const dt = Math.min(32, now - last); // clamp for tab switches
+      const dt = Math.min(32, now - last); 
       last = now;
       step(dt);
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
 
-    // --- Interaction ---
     function pointer(e){
       const rect = canvas.getBoundingClientRect();
       const x = (e.clientX - rect.left) * dpr;
@@ -291,7 +273,6 @@
       else { el.classList.remove('hidden'); el.classList.add('show'); }
     }
 
-    // Start with one cinematic pulse
     setTimeout(()=>{ pulse = 10; }, 400);
   })();
   </script>
