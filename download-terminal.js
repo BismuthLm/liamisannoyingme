@@ -5,11 +5,13 @@ function downloadDesktopApp() {
     let downloadFile = '';
     
     if (platform.includes('mac')) {
-        downloadFile = 'dist/LIAMISANNOYING Terminal-1.0.0.dmg';
+        downloadFile = 'LIAMISANNOYING%20Terminal-1.0.0.dmg';
     } else if (platform.includes('win')) {
-        downloadFile = 'dist/LIAMISANNOYING Terminal-1.0.0-win.exe';
+        // For now, fallback to web version for Windows/Linux
+        downloadFile = 'liamisannoying-terminal-standalone.html';
     } else if (platform.includes('linux')) {
-        downloadFile = 'dist/LIAMISANNOYING Terminal-1.0.0-linux.AppImage';
+        // For now, fallback to web version for Windows/Linux
+        downloadFile = 'liamisannoying-terminal-standalone.html';
     } else {
         // Default to web version if platform not detected
         downloadFile = 'liamisannoying-terminal-standalone.html';
@@ -17,7 +19,7 @@ function downloadDesktopApp() {
     
     const link = document.createElement('a');
     link.href = downloadFile;
-    link.download = downloadFile.split('/').pop();
+    link.download = downloadFile.split('/').pop().replace(/%20/g, ' ');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
