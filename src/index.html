@@ -22,14 +22,17 @@
         if (platform.includes('mac')) {
             downloadFile = '../LIAMISANNOYING%20Terminal-1.0.0.dmg';
         } else if (platform.includes('win')) {
-            // For now, fallback to web version for Windows/Linux
-            downloadFile = '../liamisannoying-terminal-standalone.html';
+            // Windows version not available yet
+            alert('Windows version coming soon! For now, please use the Mac version.');
+            return;
         } else if (platform.includes('linux')) {
-            // For now, fallback to web version for Windows/Linux
-            downloadFile = '../liamisannoying-terminal-standalone.html';
+            // Linux version not available yet
+            alert('Linux version coming soon! For now, please use the Mac version.');
+            return;
         } else {
             // Default to web version if platform not detected
-            downloadFile = '../liamisannoying-terminal-standalone.html';
+            alert('Platform not detected. Please use a Mac to download the desktop app.');
+            return;
         }
         
         const link = document.createElement('a');
@@ -104,7 +107,6 @@
         
         <div class="cta-buttons">
           <button onclick="downloadDesktopApp()">[ DOWNLOAD_DESKTOP_APP ]</button>
-          <a href="liamisannoying-terminal-standalone.html" target="_blank"><button>[ TRY_WEB_VERSION ]</button></a>
         </div>
       </div>
       
