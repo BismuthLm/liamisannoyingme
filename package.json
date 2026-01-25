@@ -13,11 +13,17 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "^28.0.0",
-    "electron-builder": "^24.0.0"
+    "electron-builder": "^24.0.0",
+    "electron-updater": "^6.0.0"
   },
   "build": {
     "appId": "com.liamisannoying.terminal",
     "productName": "LIAMISANNOYING Terminal",
+    "publish": {
+      "provider": "github",
+      "owner": "Liamisannoying-Project",
+      "repo": "liamisannoyingmefinal"
+    },
     "directories": {
       "output": "dist"
     },
