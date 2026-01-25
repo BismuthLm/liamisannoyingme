@@ -1,39 +1,141 @@
 <!DOCTYPE html>
-<html>
-  
-  <head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMES_TERMINAL - liamisannoying.me</title>
     
-    <title>Games</title>
+    <link rel="stylesheet" href="../Styles/universial.css">
+    <link rel="stylesheet" href="../Styles/navigation.css">
+
+    <link rel="icon" type="image/png" href="../Imgs/liamLOGO32.png">
     
-    <link rel="icon" type="image/png" href="../Images/l3.png">
+    <style>
+        .games-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .games-content {
+            background: var(--surface);
+            padding: 20px;
+            border: 2px solid var(--border);
+            position: relative;
+        }
+        
+        .games-content::before {
+            content: "┌─ GAME_REGISTRY ─┐";
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .games-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        
+        .games-list li {
+            margin-bottom: 10px;
+        }
+        
+        .games-list a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--background);
+            color: var(--text-bright);
+            border: 2px solid var(--border);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 1rem;
+            font-weight: normal;
+            font-family: var(--font-family);
+        }
+        
+        .games-list a:hover {
+            background: var(--text-bright);
+            color: var(--background);
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px var(--text-bright);
+        }
+        
+        .footer-note {
+            margin-top: 4rem;
+            padding: 2rem;
+            text-align: center;
+            opacity: 0.7;
+            font-style: italic;
+        }
+        
+        @media (max-width: 600px) {
+            .games-container {
+                padding: 1rem;
+            }
+            
+            .games-content {
+                padding: 1.5rem;
+            }
+            
+            .games-list a {
+                display: block;
+                text-align: center;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
-  
-    <link rel="stylesheet" type="text/css" href="../Styles/universal.css"/>
-    <link rel="stylesheet" type="text/css" href="../Styles/GamesPageStyles.css"/>
+    <nav class="navigation">
+        <h1>liamisannoying.me</h1>
+        <div class="navigation-links">
+            <a href="../index.html">HOME</a>
+            <a href="poem.html">POETRY</a>
+            <a href="art.html">ART</a>
+            <a href="GamesPage.html" class="active">GAMES</a>
+            <a href="ToolsPage.html">TOOLS</a>
+            <a href="AboutPage.html">ABOUT</a>
+        </div>
+    </nav>
 
-    <link rel="icon" type="image/png" href="../Imgs/liamisannoyingproject.jpg">
-  
-  </head>
+    <div class="terminal-header">
+        <pre>
+╔══════════════════════════════════════════════════════════════╗
+║  GAMES_MODULE: INITIALIZED                                    ║
+║  EXECUTABLE_DIRECTORY: SCANNED                               ║
+║  GAME_REGISTRY: LOADED                                        ║
+╚══════════════════════════════════════════════════════════════╝
+        </pre>
+    </div>
 
-  <body>
+    <div class="games-container">
+        <div class="games-content">
+            <h1>> GAMES_DIRECTORY</h1>
+            
+            <hr>
 
-    <ul>
-      <a href="../index.html">Home</a>
-      <a href="GamesPage.html">Games</a>
-      <a href="ToolsPage.html">Tools</a>
-      <a href="AboutPage.html">About</a>
-    </ul>
-
-     <h1>Games</h1>
-     
-     <hr>
-
-     <li><a href="../Products/Games/LiamBlaster/LiamBlaster.html">LiamBlaster</a></li>
-     
-     <h6 style="padding-top: 1000px;">Hello, humans of planet earth (and probably of class M106). If you are reading this, then I am NOT dead. I mean, what did you expect?! Weirdos.</h6>
-
-  </body>
+            <ul class="games-list">
+                <li><a href="../Products/Games/LiamBlaster/LiamBlaster.html">[ EXECUTE_LIAMBLASTER ]</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-note">
+            <p>> Hello, humans of planet earth (and probably of class M106)</p>
+            <p>> If you are reading this, then I am NOT dead</p>
+            <p>> I mean, what did you expect?! Weirdos</p>
+        </div>
+    </div>
+    
+    <div class="terminal-footer">
+        <p>> ./game_launcher.sh --scan=directory --format=terminal</p>
+        <p>> Game registry complete. System ready.</p>
+    </div>
+</body>
 </html>

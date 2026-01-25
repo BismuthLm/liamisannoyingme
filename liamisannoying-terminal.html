@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIAMISANNOYING Terminal v1.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            font-family: 'Courier New', monospace;
+            color: #0F0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-window {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid #0F0;
+            margin: 10px;
+            background: #000;
+        }
+
+        .title-bar {
+            background: #0F0;
+            color: #000;
+            padding: 5px 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title-bar .title {
+            font-size: 14px;
+        }
+
+        .title-bar .buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .title-bar .button {
+            width: 12px;
+            height: 12px;
+            background: #000;
+            border: 1px solid #0F0;
+            cursor: pointer;
+        }
+
+        .terminal-content {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .terminal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .terminal-content::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        .terminal-content::-webkit-scrollbar-thumb {
+            background: #0F0;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .prompt {
+            margin-right: 5px;
+            color: #0F0;
+        }
+
+        .command-input {
+            background: transparent;
+            border: none;
+            color: #0F0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            outline: none;
+            flex: 1;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 14px;
+            background: #0F0;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .output {
+            white-space: pre-wrap;
+            margin-bottom: 5px;
+        }
+
+        .error {
+            color: #F00;
+        }
+
+        .success {
+            color: #0F0;
+        }
+
+        .warning {
+            color: #FF0;
+        }
+
+        .ascii-art {
+            color: #0F0;
+            font-size: 10px;
+            line-height: 1;
+            white-space: pre;
+        }
+
+        .help-text {
+            color: #0F0;
+            margin: 10px 0;
+        }
+
+        .command-list {
+            margin: 10px 0;
+        }
+
+        .command-item {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+
+        .command-name {
+            color: #FF0;
+            font-weight: bold;
+        }
+
+        .command-desc {
+            color: #0F0;
+        }
+
+        @media (max-width: 600px) {
+            .terminal-window {
+                margin: 5px;
+            }
+            
+            .terminal-content {
+                font-size: 12px;
+            }
+            
+            .command-input {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-window">
+        <div class="title-bar">
+            <div class="title">LIAMISANNOYING Terminal v1.0</div>
+            <div class="buttons">
+                <div class="button" onclick="minimizeTerminal()"></div>
+                <div class="button" onclick="maximizeTerminal()"></div>
+                <div class="button" onclick="closeTerminal()"></div>
+            </div>
+        </div>
+        <div class="terminal-content" id="terminal">
+            <div class="output ascii-art" id="boot-sequence"></div>
+            <div class="output">LIAMISANNOYING Terminal v1.0 (C) 2025 Liam Mitchell</div>
+            <div class="output">Type 'help' for available commands.</div>
+            <div class="input-line">
+                <span class="prompt">C:\LIAMISANNOYING></span>
+                <input type="text" class="command-input" id="commandInput" autofocus>
+                <span class="cursor"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="terminal.js"></script>
+</body>
+</html>

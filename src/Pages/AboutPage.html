@@ -3,46 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About</title>
+    <title>ABOUT_TERMINAL - liamisannoying.me</title>
     
-    <link rel="stylesheet" type="text/css" href="../Styles/universal.css"/>
-    <link rel="stylesheet" type="text/css" href="../Styles/AboutPageStyles.css"/>
+    <link rel="stylesheet" href="../Styles/universial.css">
+    <link rel="stylesheet" href="../Styles/navigation.css">
 
-    <link rel="icon" type="image/png" href="../Images/l3.png">
-
-    <link rel="icon" type="image/png" href="../Imgs/liamisannoyingproject.jpg">
+    <link rel="icon" type="image/png" href="../Imgs/liamLOGO32.png">
+    
+    <style>
+        .about-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .about-content {
+            background: var(--surface);
+            padding: 20px;
+            border: 2px solid var(--border);
+            position: relative;
+        }
+        
+        .about-content::before {
+            content: "┌─ SYSTEM_INFO ─┐";
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .github-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .github-links a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--background);
+            color: var(--text-bright);
+            border: 2px solid var(--border);
+            text-decoration: none;
+            transition: var(--transition);
+            max-width: fit-content;
+            font-family: var(--font-family);
+        }
+        
+        .github-links a:hover {
+            background: var(--text-bright);
+            color: var(--background);
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px var(--text-bright);
+        }
+        
+        .footer-note {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            opacity: 0.7;
+            font-style: italic;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            position: relative;
+        }
+        
+        .footer-note::before {
+            content: "╔═ SYSTEM_MESSAGE ═╗";
+            position: absolute;
+            top: -20px;
+            left: 0;
+            color: var(--border);
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 600px) {
+            .about-container {
+                padding: 1rem;
+            }
+            
+            .about-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-
-    <ul>
-        <a href="../index.html">Home</a>
-        <a href="GamesPage.html">Games</a>
-        <a href="ToolsPage.html">Tools</a>
-        <a href="AboutPage.html">About</a>
-      </ul>
-
-    <h1>About</h1>
+    <div class="scanlines"></div>
     
-    <hr>
+    <nav class="navigation">
+        <h1>liamisannoying.me</h1>
+        <div class="navigation-links">
+            <a href="../index.html">HOME</a>
+            <a href="poem.html">POETRY</a>
+            <a href="art.html">ART</a>
+            <a href="GamesPage.html">GAMES</a>
+            <a href="ToolsPage.html">TOOLS</a>
+            <a href="AboutPage.html" class="active">ABOUT</a>
+        </div>
+    </nav>
+
+    <div class="terminal-header">
+        <pre>
+╔══════════════════════════════════════════════════════════════╗
+║  SYSTEM_INFO_MODULE: INITIALIZED                              ║
+║  DATABASE_ACCESS: GRANTED                                     ║
+║  USER_INFORMATION: LOADING                                   ║
+╚══════════════════════════════════════════════════════════════╝
+        </pre>
+    </div>
+
+    <div class="about-container">
+        <div class="about-content">
+            <h1>> SYSTEM_ABOUT</h1>
+            
+            <hr>
+            
+            <h2>> INFORMATION_DATABASE</h2>
+            <p>> The page to find All of the Information that You Will Ever Need*</p>
+
+            <hr>
+
+            <p>> System Status: The site may say in this broken state for some time.</p>
+            <p>> Update Status: It is unsure whether the planned major update will ever release</p>
+            <p>> Development Status: we are trying. Sort of. Looking at you Oli...</p>
+
+            <hr>
+
+            <h3>> GITHUB_REPOSITORIES</h3>
+            <div class="github-links">
+                <a href="https://github.com/Liamisannoying-Project">[ LIAMISANNOYING_LLC_GITHUB ]</a>
+                <a href="https://github.com/Liamisannoying-Project/liamisannoyingmefinal">[ SITE_REPOSITORY ]</a>
+            </div>
+        </div>
+        
+        <div class="footer-note">
+            <p>> Hello, humans of planet earth (and probably of class M106)</p>
+            <p>> If you are reading this, then I am NOT dead</p>
+            <p>> I mean, what did you expect?! Weirdos</p>
+            <p>> *Loss of brain cells because of wasting time trying to find</p>
+            <p>> All of the Information that You Will Ever Need not our fault</p>
+        </div>
+    </div>
     
-    <h2>The page to find All of the Information that You Will Ever Need*</h2>
-
-    <hr>
-
-    <h1>The site may say in this broken state for some time. It is unsure whether the planned major update will ever release, but we are trying. Sort of. Looking at you Oli...</h1>
-
-    <hr>
-
-    <h3>Github Links</h3>
-    <a href="https://github.com/Liamisannoying-Project">Liamisannoying LLC on Github</a>
-    <br>
-    <a href="https://github.com/Liamisannoying-Project/liamisannoyingmefinal">Site Repo</a>
-    <br>
-    
-    <h6 style="padding-top: 1000px;">Hello, humans of planet earth (and probably of class M106). If you are reading this, then I am NOT dead. I mean, what did you expect?! Weirdos.</h6>
-    
-    <h6>*Loss of brain cells because of wasting time trying to find All of the Information that You Will Ever Need not our fault</h6>
-
+    <div class="terminal-footer">
+        <p>> ./system_info.sh --format=terminal --output=complete</p>
+        <p>> Information retrieval complete. System stable.</p>
+    </div>
 </body>
 </html>
  
