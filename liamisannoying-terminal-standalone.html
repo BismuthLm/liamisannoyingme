@@ -99,11 +99,7 @@
         }
 
         .cursor {
-            display: inline-block;
-            width: 8px;
-            height: 14px;
-            background: #0F0;
-            animation: blink 1s infinite;
+            display: none;
         }
 
         @keyframes blink {
@@ -346,6 +342,9 @@
                 
                 const inputLine = this.terminal.querySelector('.input-line');
                 this.terminal.insertBefore(outputDiv, inputLine);
+                
+                // Auto-scroll to bottom
+                setTimeout(() => this.scrollToBottom(), 10);
             }
 
             addOutputHTML(html, className = '') {
@@ -355,10 +354,23 @@
                 
                 const inputLine = this.terminal.querySelector('.input-line');
                 this.terminal.insertBefore(outputDiv, inputLine);
+                
+                // Auto-scroll to bottom
+                setTimeout(() => this.scrollToBottom(), 10);
             }
 
             scrollToBottom() {
+                // Force scroll to bottom with multiple methods for reliability
                 this.terminal.scrollTop = this.terminal.scrollHeight;
+                this.terminal.scrollTo(0, this.terminal.scrollHeight);
+                
+                // Also scroll the document body if needed
+                if (document.body.scrollTop !== undefined) {
+                    document.body.scrollTop = document.body.scrollHeight;
+                }
+                if (window.scrollTo) {
+                    window.scrollTo(0, document.body.scrollHeight);
+                }
             }
 
             commands = {

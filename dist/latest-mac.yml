@@ -1,0 +1,11 @@
+version: 1.0.0
+files:
+  - url: LIAMISANNOYING-Terminal-1.0.0-mac.zip
+    sha512: r8yBwQsukZrDPFOL4+3u9THxOU2esCwMtK6tWnkeNGOuX1Lda9/h0wlWqbalNlt8JOEpjQmiYgxHFOqTy2DioQ==
+    size: 95742291
+  - url: LIAMISANNOYING-Terminal-1.0.0.dmg
+    sha512: XrJ3O5RGZ0c4FPr5SOcZEN9BvRmQnP83W3epmZrrNjVQPvKYoWMfJ4q1JsQzb8TQkBdWf8ZTyifmhShpmMGZrw==
+    size: 98827107
+path: LIAMISANNOYING-Terminal-1.0.0-mac.zip
+sha512: r8yBwQsukZrDPFOL4+3u9THxOU2esCwMtK6tWnkeNGOuX1Lda9/h0wlWqbalNlt8JOEpjQmiYgxHFOqTy2DioQ==
+releaseDate: '2026-01-25T07:48:15.875Z'

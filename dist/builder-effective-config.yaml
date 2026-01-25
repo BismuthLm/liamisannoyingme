@@ -1,0 +1,17 @@
+directories:
+  output: dist
+  buildResources: build
+appId: com.liamisannoying.terminal
+productName: LIAMISANNOYING Terminal
+files:
+  - filter:
+      - main.js
+      - liamisannoying-terminal-standalone.html
+      - icon.png
+mac:
+  category: public.app-category.developer-tools
+win:
+  target: nsis
+linux:
+  target: AppImage
+electronVersion: 28.3.3

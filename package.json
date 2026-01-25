@@ -1,0 +1,39 @@
+{
+  "name": "liamisannoying-terminal",
+  "version": "1.0.0",
+  "description": "MS-DOS style terminal application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "dist": "electron-builder --publish=never"
+  },
+  "keywords": ["terminal", "msdos", "ascii", "retro"],
+  "author": "Liam Mitchell",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.liamisannoying.terminal",
+    "productName": "LIAMISANNOYING Terminal",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "liamisannoying-terminal-standalone.html",
+      "icon.png"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}
