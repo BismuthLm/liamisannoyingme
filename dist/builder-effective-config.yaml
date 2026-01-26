@@ -5,8 +5,8 @@ appId: com.liamisannoying.terminal
 productName: LIAMISANNOYING Terminal
 publish:
   provider: github
-  owner: Liamisannoying-Project
-  repo: liamisannoyingmefinal
+  owner: BismuthLm
+  repo: liamisannoyingme
 files:
   - filter:
       - main.js
