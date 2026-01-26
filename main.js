@@ -6,8 +6,8 @@ const path = require('path');
 autoUpdater.checkForUpdatesAndNotify();
 autoUpdater.setFeedURL({
   provider: 'github',
-  owner: 'Liamisannoying-Project',
-  repo: 'liamisannoyingmefinal'
+  owner: 'BismuthLm',
+  repo: 'liamisannoyingme'
 });
 
 // Auto updater events
