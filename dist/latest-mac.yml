@@ -1,11 +1,11 @@
 version: 1.0.0
 files:
   - url: LIAMISANNOYING-Terminal-1.0.0-mac.zip
-    sha512: r8yBwQsukZrDPFOL4+3u9THxOU2esCwMtK6tWnkeNGOuX1Lda9/h0wlWqbalNlt8JOEpjQmiYgxHFOqTy2DioQ==
-    size: 95742291
+    sha512: uKjNPxtGKohNbagJmqZG1EnxxM2TKdemF6FA0av1Cz8DNWjY/ynruM0K9K0+GVU6DNko3HFKTrvHSEyMNnWqDg==
+    size: 95742514
   - url: LIAMISANNOYING-Terminal-1.0.0.dmg
-    sha512: XrJ3O5RGZ0c4FPr5SOcZEN9BvRmQnP83W3epmZrrNjVQPvKYoWMfJ4q1JsQzb8TQkBdWf8ZTyifmhShpmMGZrw==
-    size: 98827107
+    sha512: X1iz5qo/UVcDvQDmbwMaatygSpU253BUbO6tk81Tpk1o6f20CnIGOrAe9GMJmcch9VcQCrfKOUcc5u73oVbBpg==
+    size: 98827393
 path: LIAMISANNOYING-Terminal-1.0.0-mac.zip
-sha512: r8yBwQsukZrDPFOL4+3u9THxOU2esCwMtK6tWnkeNGOuX1Lda9/h0wlWqbalNlt8JOEpjQmiYgxHFOqTy2DioQ==
-releaseDate: '2026-01-25T07:48:15.875Z'
+sha512: uKjNPxtGKohNbagJmqZG1EnxxM2TKdemF6FA0av1Cz8DNWjY/ynruM0K9K0+GVU6DNko3HFKTrvHSEyMNnWqDg==
+releaseDate: '2026-01-26T01:16:59.184Z'

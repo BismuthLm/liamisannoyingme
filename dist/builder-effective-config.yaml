@@ -3,6 +3,10 @@ directories:
   buildResources: build
 appId: com.liamisannoying.terminal
 productName: LIAMISANNOYING Terminal
+publish:
+  provider: github
+  owner: Liamisannoying-Project
+  repo: liamisannoyingmefinal
 files:
   - filter:
       - main.js
