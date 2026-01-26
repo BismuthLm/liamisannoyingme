@@ -42,30 +42,7 @@ class LIAMISANNOYINGTerminal {
     }
 
     bootSequence() {
-        const bootArt = `
-╔══════════════════════════════════════════════════════════════╗
-║  LIAMISANNOYING TERMINAL SYSTEM v1.0                          ║
-║  (C) 2025 Liam Mitchell Systems                               ║
-║                                                              ║
-║  Initializing...                                             ║
-║  Loading COMMAND.COM...                                      ║
-║  Loading LIAMISANNOYING.SYS...                               ║
-║  Memory: 640K OK                                            ║
-║  System Ready.                                               ║
-╚══════════════════════════════════════════════════════════════╝
-
- _____ _   _ _   _    _    _   _  ____ _____ ____  
-| ____| \\ | | | | |  / \\  | \\ | |/ ___| ____|  _ \\ 
-|  _| |  \\| | |_| | / _ \\ |  \\| | |   |  _| | | | |
-| |___| |\\  |  _  |/ ___ \\| |\\  | |___| |___| |_| |
-|_____|_| \\_|_| |_/_/   \\_\\_| \\_|\\____|_____|____/ 
-                                                      
-    _____ _   _ _   _    ____    _    _   _  ____  
-   |  ___| | | | | | |  / ___|  / \\  | \\ | |/ ___| 
-   | |_  | | | | | | | | |  _  / _ \\ |  \\| | |  _  
-   |  _| | |_| | |_| | | |_| |/ ___ \\| |\\  | |_| | 
-   |_|    \\___/ \\___/   \\____/_/   \\_\\_| \\_|\\____| 
-        `;
+        const bootArt = `Version 1 New`;
         
         document.getElementById('boot-sequence').textContent = bootArt;
     }

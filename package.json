@@ -1,6 +1,6 @@
 {
   "name": "liamisannoying-terminal",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "MS-DOS style terminal application",
   "main": "main.js",
   "scripts": {
