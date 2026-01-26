@@ -1,6 +1,6 @@
 {
   "name": "liamisannoying-terminal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MS-DOS style terminal application",
   "main": "main.js",
   "scripts": {
@@ -26,8 +26,8 @@
     "productName": "LIAMISANNOYING Terminal",
     "publish": {
       "provider": "github",
-      "owner": "Liamisannoying-Project",
-      "repo": "liamisannoyingmefinal"
+      "owner": "BismuthLm",
+      "repo": "liamisannoyingme"
     },
     "directories": {
       "output": "dist"
