@@ -17,7 +17,7 @@
   "author": "Liam Mitchell",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^35.7.5",
+    "electron": "^39.8.4",
     "electron-builder": "^26.6.0",
     "electron-updater": "^6.7.3"
   },
