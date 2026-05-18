@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NZ MMP Simulator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 24px;
+      color: #222;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .party-row {
+      display: grid;
+      grid-template-columns: 120px 1fr 60px;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .bar {
+      height: 18px;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 800px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>New Zealand MMP Simulator</h1>
+
+  <div class="container">
+    <div class="panel">
+      <h2>Party Vote</h2>
+      <div id="sliders"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Seat Projection</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Party</th>
+            <th>Vote %</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="results"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const parties = [
+      { name: 'Labour', vote: 30, color: '#d71920' },
+      { name: 'National', vote: 35, color: '#00529f' },
+      { name: 'Greens', vote: 10, color: '#098137' },
+      { name: 'ACT', vote: 9, color: '#fdd700' },
+      { name: 'NZ First', vote: 7, color: '#000000' },
+      { name: 'Te Pāti Māori', vote: 3, color: '#aa0000' }
+    ];
+
+    const TOTAL_SEATS = 120;
+    const THRESHOLD = 5;
+
+    // Simplified electorate wins for threshold exemption
+    // In real NZ MMP, winning one electorate bypasses the 5% threshold.
+    const electorateWins = {
+      'Labour': 25,
+      'National': 45,
+      'Greens': 0,
+      'ACT': 1,
+      'NZ First': 0,
+      'Te Pāti Māori': 6
+    };
+
+    const slidersDiv = document.getElementById('sliders');
+    const resultsDiv = document.getElementById('results');
+
+    function createSliders() {
+      slidersDiv.innerHTML = '';
+
+      parties.forEach((party, index) => {
+        const row = document.createElement('div');
+        row.className = 'party-row';
+
+        const label = document.createElement('div');
+        label.textContent = party.name;
+
+        const slider = document.createElement('input');
+        slider.type = 'range';
+        slider.min = 0;
+        slider.max = 60;
+        slider.step = 0.1;
+        slider.value = party.vote;
+
+        const value = document.createElement('div');
+        value.textContent = `${party.vote.toFixed(1)}%`;
+
+        slider.addEventListener('input', () => {
+          party.vote = parseFloat(slider.value);
+          value.textContent = `${party.vote.toFixed(1)}%`;
+          renderResults();
+        });
+
+        row.appendChild(label);
+        row.appendChild(slider);
+        row.appendChild(value);
+
+        slidersDiv.appendChild(row);
+      });
+    }
+
+    function calculateSeats() {
+      const eligible = parties.filter(
+        p => p.vote >= THRESHOLD || electorateWins[p.name] > 0
+      );
+
+      const totalEligibleVotes = eligible.reduce((sum, p) => sum + p.vote, 0);
+
+      // Sainte-Laguë allocation
+      const quotients = [];
+
+      eligible.forEach(party => {
+        for (let i = 0; i < TOTAL_SEATS * 2; i++) {
+          const divisor = (2 * i) + 1;
+          quotients.push({
+            party: party.name,
+            value: party.vote / divisor
+          });
+        }
+      });
+
+      quotients.sort((a, b) => b.value - a.value);
+
+      const seatMap = {};
+
+      eligible.forEach(p => {
+        seatMap[p.name] = 0;
+      });
+
+      for (let i = 0; i < TOTAL_SEATS; i++) {
+        seatMap[quotients[i].party]++;
+      }
+
+      return parties.map(party => {
+        const proportionalSeats = seatMap[party.name] || 0;
+        const electorateSeats = electorateWins[party.name] || 0;
+
+        // Overhang rule
+        const finalSeats = Math.max(proportionalSeats, electorateSeats);
+
+        return {
+          ...party,
+          electorateSeats,
+          listSeats: Math.max(0, finalSeats - electorateSeats),
+          seats: finalSeats,
+          eligible: party.vote >= THRESHOLD || electorateSeats > 0
+        };
+      });
+    }
+
+    function renderResults() {
+      const results = calculateSeats();
+
+      resultsDiv.innerHTML = '';
+
+      const governmentLeft = results
+        .filter(r => ['Labour', 'Greens', 'Te Pāti Māori'].includes(r.name))
+        .reduce((sum, r) => sum + r.seats, 0);
+
+      const governmentRight = results
+        .filter(r => ['National', 'ACT', 'NZ First'].includes(r.name))
+        .reduce((sum, r) => sum + r.seats, 0);
+
+      results.forEach(result => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+          <td>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div class="bar" style="width:18px; background:${result.color};"></div>
+              ${result.name}
+            </div>
+          </td>
+          <td>${result.vote.toFixed(1)}%</td>
+          <td>
+            ${result.seats}
+            <div style="font-size:12px; color:#666;">
+              ${result.electorateSeats} electorate / ${result.listSeats} list
+            </div>
+          </td>
+        `;
+
+        resultsDiv.appendChild(row);
+      });
+
+      const coalitionRow = document.createElement('tr');
+      coalitionRow.innerHTML = `
+        <td colspan="3" style="padding-top:20px;">
+          <strong>Bloc Totals</strong><br>
+          Centre-left: ${governmentLeft} seats<br>
+          Centre-right: ${governmentRight} seats<br>
+          Majority needed: 61
+        </td>
+      `;
+
+      resultsDiv.appendChild(coalitionRow);
+    }
+
+    createSliders();
+    renderResults();
+  </script>
+</body>
+</html>
